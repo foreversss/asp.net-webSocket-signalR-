@@ -1,0 +1,8 @@
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\bin\Debug\WebSocketNet.exe.config
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\bin\Debug\WebSocketNet.exe
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\bin\Debug\WebSocketNet.pdb
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\bin\Debug\Fleck.dll
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\bin\Debug\Newtonsoft.Json.dll
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\obj\Debug\WebSocketNet.csprojResolveAssemblyReference.cache
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\obj\Debug\WebSocketNet.exe
+D:\Work\Rabbit\Test\RabbitMq\WebSocketNet\obj\Debug\WebSocketNet.pdb

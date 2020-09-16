@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <input type="button" id="btnConnect" value="连接" /> <input type="button" id="btnClose" value="关闭" /><br />
+    <input type="text" id="txtMsg" /><input type="button" id="btnSendMsg" value="发送" />
+    <br />
+    <span id="statusMsg"></span><br />
+    <ul id="ulMsgList"></ul>
+
+    <script src="../Content/jquery.min.js"></script>
+
+
+    <script>
+        var webScoket = null;
+        $(function () {
+
+            $("#btnConnect").click(function () {
+                Connect();
+            });
+
+            //关闭连接
+            $("#btnClose").click(function () {
+                webScoket.close();
+            }); 
+
+            //发送消息
+            $("#btnSendMsg").click(function () {
+                if (webScoket == null) {
+                    alert("请先连接。。。。");
+                    return;
+                }
+                
+                //如果webScoket的状态是连接的状态
+                if (webScoket.readyState == webScoket.OPEN) {
+                    //发送消息
+                    webScoket.send($("#txtMsg").val());
+                } else {
+                    alert("连接已关闭，请重新连接");
+                }
+            });
+        });
+       
+        function Connect() {
+            var wsurl = "ws://localhost:17949/api/chat";
+            webScoket = new WebSocket(wsurl);
+
+            //打开webscoket连接
+            webScoket.onopen = function () {
+                alert("已连接。。。。");
+            };
+            webScoket.onmessage = function (evt) {
+                                          
+                $("#ulMsgList").append("<li>" + evt.data + "</li>");
+            };
+            webScoket.onclose = function () {
+                alert("已关闭连接。。。。");
+            };
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+
+    
+</head>
+<body>
+    
+  <button onclick="login();">login</button>
+    <div>
+        <ul id="ul">
+           
+        </ul>
+
+    </div>
+
+
+    <script src="../Scripts/jquery-1.10.2.js"></script>
+    <script>
+        var socket;
+
+        if ("WebSocket" in window) {
+           
+            var ws = new WebSocket("ws://127.0.0.1:8181");
+            socket = ws;
+            ws.onopen = function () {
+                
+            };
+            ws.onmessage = function (evt) {
+                var received_msg = evt.data;
+                
+                $("#ul").append("<li>" + evt.data + "</li>");
+                //console.log("Server:" + evt.data);
+            };
+            ws.onclose = function () {
+                
+                alert("Connection is closed...");
+            };
+
+
+        } else {
+            //不支持WebSocket
+            alert("不支持WebSocket");
+        }
+
+        function login() {
+            socket.send("{\"uid\":\"admin\",\"pwd\":\"admin\"}");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <span>用户:</span><input type="text" id="txtUserName" /><br />
+    <input type="button" id="btnConnect" value="连接" /> <input type="button" id="btnClose" value="关闭" /><br />
+    <input type="text" id="txtMsg" /><input type="button" id="btnSendMsg" value="发送" />
+    <br />
+    <span id="statusMsg"></span><br />
+    <ul id="ulMsgList"></ul>
+
+
+    <script src="../Scripts/jquery-3.4.1.min.js"></script>
+
+    <script>
+      
+        //避免ws重复连接
+        var lockReconnect = false;
+        var wsUrl = null;
+        // 判断当前浏览器是否支持WebSocket
+        var ws = null;
+     
+        //连接
+        $("#btnConnect").click(function () {
+            wsUrl ="ws://127.0.0.1:8203?" + $("#txtUserName").val();         
+            createWebSocket(wsUrl);
+        });
+
+        //发送消息
+        $("#btnSendMsg").click(function () {
+            if (ws == null) {
+                alert("请先连接");
+                return;
+            }
+
+            if (ws.readyState == ws.OPEN) {
+                if ($("#txtMsg").val() == "") {
+                    alert("发送内容不能为空");
+                    return;
+                }
+                //给服务器推送消息
+                ws.send($("#txtMsg").val());
+            } else {
+                $("#statusMsg").text("连接已关闭，请重新连接");
+            }
+        });
+
+        //关闭
+        $("#btnClose").click(function () {
+            ws.close();
+        });
+
+
+        function createWebSocket(url) {
+            try {
+                //判断浏览器是否支持websocket
+                if ('WebSocket' in window) {
+                    ws = new WebSocket(url);
+                }
+                initEventHandle();
+            } catch (e) {
+                //重新连接
+                reconnect(url);
+            }
+        }
+        //webSocket事件
+        function initEventHandle() {
+            //关闭事件
+            ws.onclose = function (e) {
+                reconnect(wsUrl);
+                console.log("连接关闭!" + new Date().toLocaleString() + "原因:" + e.reason + "错误代码:" + e.code);
+            }
+            //打开事件(连接成功)
+            ws.onopen = function () {
+                //heartCheck.reset().start();//心跳检测重置
+                //告诉服务端 有用户登录进来了  请更新页面
+                // ws.send("OK");
+                console.log("连接成功!" + new Date().toLocaleString());
+                $("#statusMsg").text("已连接，当前用户：" + $("#txtUserName").val());
+            }
+            //连接错误
+            ws.onerror = function () {
+
+            }
+            //收到消息事件
+            ws.onmessage = function (event) {
+                $("#ulMsgList").append("<li>" + event.data + "</li>");
+            }
+        }
+        //重新连接
+        function reconnect(url) {
+            //如果lockReconnect等于true时  说明ws是打开连接的状态
+            if (lockReconnect) {
+                return;
+            }
+            lockReconnect = true;
+
+            //没连接上会一直重连，设置延迟避免请求过多
+            setTimeout(function () {
+                createWebSocket(url);
+                lockReconnect = false;
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>

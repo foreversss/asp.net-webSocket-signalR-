@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <span>用户:</span><input type="text" id="txtUserName" /><br />
+    <input type="button" id="btnConnect" value="连接" /> <input type="button" id="btnClose" value="关闭" /><br />
+    <input type="text" id="txtMsg" /><input type="button" id="btnSendMsg" value="发送" />
+    <br />
+    <span id="statusMsg"></span><br />  
+    <ul id="ulMsgList"></ul>
+
+    <script src="../Content/jquery.min.js"></script>
+
+    <script>
+        var webscoket = null;
+        $(function () {
+            $("#btnConnect").click(function () {
+
+                Connect();
+            });
+          
+               
+    
+
+            //发送消息
+            $("#btnSendMsg").click(function () {
+                if (webscoket == null) {
+                    alert("请先连接");
+                    return;
+                }
+                console.log(webscoket.readyState);
+                console.log(webscoket.OPEN);
+
+                if (webscoket.readyState == webscoket.OPEN) {
+                    if ($("#txtMsg").val() == "") {
+                        alert("发送内容不能为空");
+                        return;
+                    }
+                    //给服务器推送消息
+                    webscoket.send($("#txtMsg").val());
+                } else {
+                    $("#statusMsg").text("连接已关闭，请重新连接");
+                }
+            });
+
+
+        });
+
+        function Connect() {
+            var wsurl = "ws://localhost:17949/api/MyScoketQL/Connect?userName=" + $("#txtUserName").val();
+            webscoket = new WebSocket(wsurl);
+            //连接
+            webscoket.onopen = function () {
+                $("#statusMsg").text("已连接，当前用户：" + $("#txtUserName").val());
+            };
+            //发送消息时触发
+            webscoket.onmessage = function (evt) {
+                $("#ulMsgList").append("<li>" + evt.data + "</li>");
+            };
+            //关闭连接
+            webscoket.onclose = function () {
+                console.log(222);
+            };
+            //错误时触发
+            webscoket.onerror = function (evt) {
+                $("#statusMsg").text(JSON.stringify(evt));
+            }
+        }
+    </script>
+</body>
+</html>
